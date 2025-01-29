@@ -13,3 +13,6 @@ export { default as Content } from "./Admin/Content";
 export { default as AddFood } from "./Admin/AddFood";
 export { default as Stats } from "./Admin/Dashboard";
 export { default as OrderSteps } from "./OrderSteps";
+export { default as ReservationSection } from "./Reservation";
+export { default as CustomerFeedback } from "./Feedback";
+export { default as AppDownload } from "./AppDownload";

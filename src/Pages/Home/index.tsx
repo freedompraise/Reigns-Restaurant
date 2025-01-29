@@ -1,4 +1,11 @@
-import { MenuSection, ShowcaseBanner, OrderSteps } from "../../components";
+import {
+  MenuSection,
+  ShowcaseBanner,
+  OrderSteps,
+  ReservationSection,
+  CustomerFeedback,
+  AppDownload,
+} from "../../components";
 
 const Home = () => {
   return (
@@ -6,6 +13,9 @@ const Home = () => {
       <ShowcaseBanner />
       <OrderSteps />
       <MenuSection />
+      <ReservationSection />
+      <CustomerFeedback />
+      <AppDownload />
     </div>
   );
 };
