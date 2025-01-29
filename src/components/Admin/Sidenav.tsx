@@ -60,7 +60,7 @@ const SidenavFooter = () => {
       initial={{ opacity: 0, x: 200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 200 }}
-      onClick={() => logout(user, dispatch, navigate)}
+      onClick={() => logout(dispatch, navigate)}
       className="flex items-center justify-center mt-auto px-3 gap-3  text-orange-50 cursor-pointer opacity-70 hover:opacity-100"
     >
       <AiFillLock className="font-bold text-xl text-orange-50" />

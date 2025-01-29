@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     fetchFoodData(dispatch);
-    user && fetchUserCartData(user, dispatch);
+    user && fetchUserCartData(dispatch);
   }, []);
 
   useEffect(() => {
@@ -46,10 +46,10 @@ function App() {
       <div className="w-screen h-auto min-h-[100vh] flex flex-col bg-primary">
         {showCart && <Cart />}
         {showContactForm && <Contact />}
-        {!(adminMode && isAdmin(user)) && <Header />}
+        {!(adminMode && isAdmin()) && <Header />}
         <main
           className={`${
-            !(adminMode && isAdmin(user)) &&
+            !(adminMode && isAdmin()) &&
             "mt-16 md:mt-16 px-3 md:px-8 md:py-6 py-4"
           } w-full h-auto`}
         >
@@ -63,7 +63,7 @@ function App() {
             <Route path="/menu" element={<Menu />} />
             <Route path="/services" element={<Services />} />
           </Routes>
-          {!(adminMode && isAdmin(user)) && <Footer />}
+          {!(adminMode && isAdmin()) && <Footer />}
         </main>
       </div>
     </AnimatePresence>

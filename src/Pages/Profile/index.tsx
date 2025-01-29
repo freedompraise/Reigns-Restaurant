@@ -1,9 +1,6 @@
-import {  BiUser } from "react-icons/bi";
-import {  BsPhone } from "react-icons/bs";
-import {
-  MdOutlineDataSaverOn,
-  MdDeleteOutline,
-} from "react-icons/md";
+import { BiUser } from "react-icons/bi";
+import { BsPhone } from "react-icons/bs";
+import { MdOutlineDataSaverOn, MdDeleteOutline } from "react-icons/md";
 
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
@@ -13,47 +10,44 @@ import { AssetUploader, Loader } from "../../components";
 import { updateUserData } from "../../utils/functions";
 import { firebaseRemoveUploadedImage } from "../../Firebase";
 
-
 const UpdateProfile = () => {
   const [{ user }, dispatch] = useStateValue();
-  const [displayName, setDisplayName] = useState(user.displayName)
+  const [displayName, setDisplayName] = useState(user.displayName);
   // const [email, setEmail] = useState(user.email)
-  const [photoURL, setPhotoURL] = useState(user.photoURL)
-  const [loading, setLoading] = useState(false)
-  const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber)
-  const [btnText, setBtnText] = useState("Save")
+  const [photoURL, setPhotoURL] = useState(user.photoURL);
+  const [loading, setLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
+  const [btnText, setBtnText] = useState("Save");
   const [loaderMessage, setLoadermessage] = useState("");
 
   const deleteImage = async () => {
     setLoadermessage("Removing Photo......");
     firebaseRemoveUploadedImage(photoURL, setPhotoURL, setLoading);
     const data = { ...user, photoURL: null };
-    await updateUserData(data, dispatch, false);
+    await updateUserData();
   };
   const saveChanges = async () => {
     setBtnText("Saving....");
-    if(displayName.lenth < 0 || phoneNumber.length !== 10)
-    {
-      toast.error("Fill out fields correctly")
-      setBtnText("Save")
-    }else{
+    if (displayName.lenth < 0 || phoneNumber.length !== 10) {
+      toast.error("Fill out fields correctly");
+      setBtnText("Save");
+    } else {
       const data = {
         ...user,
         displayName,
         phoneNumber,
         photoURL,
-      }
-      await updateUserData(data, dispatch, true);
+      };
+      await updateUserData();
       setBtnText("Save");
     }
-
   };
 
   const updatePhotoUrl = async (newUrl: string) => {
     setPhotoURL(newUrl);
     const data = { ...user, photoURL: newUrl };
-     await updateUserData(data, dispatch, false)
-  }
+    await updateUserData();
+  };
 
   const validateNumber = (value: any) => {
     if (isNaN(value)) {
@@ -62,8 +56,6 @@ const UpdateProfile = () => {
     }
     return value;
   };
-
-
 
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -95,12 +87,11 @@ const UpdateProfile = () => {
           </div>
         </div>
         <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-[225px]  md:h-[420px] round-lg">
-          {
-            loading ? (
-              <Loader progress={loaderMessage} />
-            ):(
-              <>
-             {photoURL ? (
+          {loading ? (
+            <Loader progress={loaderMessage} />
+          ) : (
+            <>
+              {photoURL ? (
                 <>
                   <div className="relative h-full">
                     <img
@@ -126,9 +117,8 @@ const UpdateProfile = () => {
                   promise={setLoading}
                 />
               )}
-              </>
-            )
-          }
+            </>
+          )}
         </div>
 
         <div className="w-full flex items-center justify-center">
