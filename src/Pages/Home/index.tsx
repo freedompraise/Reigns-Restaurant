@@ -1,15 +1,13 @@
-import { FruitsSection, MenuSection, ShowcaseBanner, } from "../../components"
+import { MenuSection, ShowcaseBanner, OrderSteps } from "../../components";
 
 const Home = () => {
   return (
-    <div className='flex w-full h-auto flex-col items-center justify-center'>
+    <div className="flex w-full h-auto flex-col items-center justify-center">
       <ShowcaseBanner />
-      <FruitsSection />
+      <OrderSteps />
       <MenuSection />
-
     </div>
+  );
+};
 
-  )
-}
-
-export default Home
+export default Home;
