@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { foodItemsStatic } from "../../../types";
 
@@ -14,7 +13,7 @@ const StaticsImages: React.FC<foodItemsStatic> = ({ items }) => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 1.1 }}
             src={item.imgSrc}
-            alt="icecream"
+            alt="Food Image"
             className="w-24 lg:w-40 -mt-10 lg:-mt-20"
           />
           <p className="text-base lg:text-lg font-semibold text-textColor">

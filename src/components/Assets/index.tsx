@@ -13,21 +13,27 @@ import IcreamI from "../../img/i1.png";
 import StrawberryI from "../../img/f5.png";
 import ChickenI from "../../img/c3.png";
 import FishI from "../../img/fi3.png";
-
-
+import egusi from "../../img/egusi.webp";
+import ofada from "../../img/ofada.webp";
+import turkey from "../../img/turkey.webp";
+import vegetable from "../../img/vegetable.webp";
 
 // Exports
-export const Logo = LogoI
-export const Avatar = AvatarI
-export const Cheff = CheffI
-export const Cheff1 = Cheff1I
-export const BikeDelivery = BikeDeliveryI
-export const HeroBg = HeroBgI
-export const Icecream = IcreamI
-export const Strawberry = StrawberryI
-export const Chicken = ChickenI
-export const Fish = FishI
-export const EmptyCartImg = EmptyCartI
-export const NotFoundImg = NotFoundI
-export const CreditCard = Visa
-export const MOMO = Momo
+export const Logo = LogoI;
+export const Avatar = AvatarI;
+export const Cheff = CheffI;
+export const Cheff1 = Cheff1I;
+export const BikeDelivery = BikeDeliveryI;
+export const HeroBg = HeroBgI;
+export const Icecream = IcreamI;
+export const Strawberry = StrawberryI;
+export const Chicken = ChickenI;
+export const Fish = FishI;
+export const EmptyCartImg = EmptyCartI;
+export const NotFoundImg = NotFoundI;
+export const CreditCard = Visa;
+export const MOMO = Momo;
+export const Egusi = egusi;
+export const Ofada = ofada;
+export const Turkey = turkey;
+export const Vegetable = vegetable;
