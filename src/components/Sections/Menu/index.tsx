@@ -1,28 +1,27 @@
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
 import Container from "../../Container";
-import { FilterFood } from "../../../utils/filters";
 import Filters from "../../Filters";
 import { Title } from "..";
 import { useStateValue } from "../../../context/StateProvider";
 
-const Menu = ({title}:{title?:string}) => {
-
-  const [scrollValue, setScrollValue] = useState(0);
-  const [{ foodItems }, dispatch] = useStateValue();
+const Menu = ({ title }: { title?: string }) => {
+  const [{ foodItems }] = useStateValue();
   const [filter, setFilter] = useState<string>("all");
-    
+
   return (
-    <section className="w-full my-5" id="menu">
+    <section className="w-full my-5">
       <div className="w-full flex items-center justify-center">
-        <Title title={title || "Our Hot Dishes"} center />
+        <Title title={title || "Popular Dishes"} center />
       </div>
-      <Filters filter={filter} setFilter = {setFilter} />
+      <Filters filter={filter} setFilter={setFilter} />
       <Container
-        className="bg-containerbg"
-        col
-        scrollOffset={scrollValue}
-        items={filter === "all" ? foodItems : FilterFood(filter)}
+        items={
+          filter === "all"
+            ? foodItems
+            : foodItems.filter(
+                (item: { category: string }) => item.category === filter
+              )
+        }
       />
     </section>
   );

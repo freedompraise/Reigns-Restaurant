@@ -24,7 +24,7 @@ import { fetchFoodData } from "../../../utils/functions";
 
 const AddFood = () => {
   const [title, setTitle] = useState("");
-  const [calories, setCalories] = useState("");
+  const [availability_status, setAvailability_status] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
   const [category, setCategory] = useState("");
@@ -42,7 +42,7 @@ const AddFood = () => {
     setLoadermessage(`Saving Product ${title}.`);
     setLoading(true);
     try {
-      if (!title || !calories || !price || !image || !category) {
+      if (!title || !availability_status || !price || !image || !category) {
         toast.error("Please fill all fields before saving product 🤗");
         setLoading(false);
         return;
@@ -50,7 +50,7 @@ const AddFood = () => {
         const data = {
           id: Date.now(),
           title: title,
-          calories: calories,
+          availability_status: true,
           category: category,
           description: description,
           price: price,
@@ -81,7 +81,7 @@ const AddFood = () => {
   };
   const clearForm = () => {
     setTitle("");
-    setCalories("");
+    setAvailability_status("");
     setPrice("");
     setImage(null);
     // setCategory("");
@@ -96,8 +96,6 @@ const AddFood = () => {
     }
     return value;
   };
-
-
 
   return (
     <div className="w-full h-fullflex items-center justify-center">
@@ -172,7 +170,7 @@ const AddFood = () => {
           )}
         </div>
         <div className="w-full flex flex-col md:flex-row items-center gap-3">
-          <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
+          {/* <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
             <MdOutlineFoodBank className="text-gray-600 text-2xl" />
             <input
               type="text"
@@ -181,9 +179,9 @@ const AddFood = () => {
               autoFocus
               className="h-full w-full  bg-transparent pl-2 text-textColor outline-none border-none placeholder:text-gray-400"
               value={calories}
-              onChange={(e) => setCalories(e.target.value)}
+              onChange={(e) => setAvailability_status(e.target.value)}
             />
-          </div>
+          </div> */}
           <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
             <GiTakeMyMoney className="text-gray-600 text-2xl" />
             <input

@@ -1,6 +1,7 @@
 import { FoodItem } from "../../../types";
 import { motion } from "framer-motion";
-import Action from "./action";
+import { FaShoppingCart, FaHeart, FaEye } from "react-icons/fa";
+
 export const SingleFoodItem = ({
   item,
   col,
@@ -10,39 +11,53 @@ export const SingleFoodItem = ({
   col?: boolean;
   admin?: boolean;
 }) => {
-  const { id, title, price, calories, imageURL, description } = item;
+  const { name, price, imageURL, availability_status } = item;
+
+  const generateStars = () => {
+    return Array(5)
+      .fill(0)
+      .map((_, i) => <span key={i}>⭐</span>); // Simulating a 5-star rating
+  };
 
   return (
     <motion.div
       whileTap={{ rotate: [0, -1, 1, -1, 0] }}
-      className={`${
-        !col ? "w-[275px] min-w-[275px]" : "w-[320px] min-w-[320px]"
-      } md:w-[300px] md:min-w-[300px] ${
-        col ? "my-12" : "my-2 md:my-5"
-      } h-auto bg-cardOverlay rounded-lg p-2 px-3 backdrop-blur-lg hover:drop-shadow-sm cursor-pointer`}
+      className="w-full md:w-[320px] bg-white shadow-md rounded-lg p-4"
     >
-      <div className="w-full flex items-center justify-between">
-        <motion.img
-          whileHover={{ scale: 1.2 }}
-          whileTap={{ scale: 1.1 }}
-          className="w-40 h-40 md:w-48 md:h-40 -mt-8 object-contain cursor-pointer"
-          alt={description}
+      <div className="relative w-full h-40 flex items-center justify-center">
+        <img
           src={imageURL}
+          alt={name}
+          className="w-full h-full object-cover rounded-lg"
         />
-        <Action food={item} admin={admin} />
       </div>
-      <div className="w-full flex items-end justify-end flex-col">
-        <p className="text-textColor font-semi-bold text-lg">{title}</p>
-        <p className="mt-1 text-sm text-gray-500">{description} </p>
-        {admin && (
-          <p className="mt-1 text-sm text-gray-500">{calories} calories </p>
-        )}
-        <div className="flex items-center justify-between gap-8 ">
-          <p className="text-base text-headingColor font-semibold">
-            <span className="text-sm text-red-600">₦</span> {price}
-          </p>
-        </div>
+
+      <div className="flex justify-between items-center mt-3">
+        <button className="p-2 bg-gray-100 rounded-full">
+          <FaShoppingCart />
+        </button>
+        <button className="p-2 bg-gray-100 rounded-full">
+          <FaHeart />
+        </button>
+        <button className="p-2 bg-gray-100 rounded-full">
+          <FaEye />
+        </button>
+      </div>
+
+      <div className="mt-3 flex flex-col gap-1">
+        <span
+          className={`text-sm ${
+            availability_status ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {availability_status ? "AVAILABLE" : "NOT AVAILABLE"}
+        </span>
+        <div className="flex">{generateStars()}</div>
+        <p className="font-bold">{name}</p>
+        <p className="text-red-600">₦{price}</p>
       </div>
     </motion.div>
   );
 };
+
+export default SingleFoodItem;
