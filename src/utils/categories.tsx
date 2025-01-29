@@ -1,24 +1,24 @@
 import {
-  GiFruitTree,
   GiChickenOven,
   GiBeerBottle,
-  GiBowlOfRice,
+  GiPharoah,
+  GiMeat,
+  GiBubblingBowl,
+  GiRoundSilo,
 } from "react-icons/gi";
-import { MdOutlineIcecream } from "react-icons/md";
-import { FaFish } from "react-icons/fa";
 
 export const Categories = [
   {
     id: 1,
-    name: "Chicken",
-    urlParam: "chicken",
+    name: "Continentals",
+    urlParam: "continental",
     icon: <GiChickenOven />,
   },
   {
     id: 2,
-    name: "Fruits",
-    urlParam: "fruits",
-    icon: <GiFruitTree />,
+    name: "Africana",
+    urlParam: "africana",
+    icon: <GiPharoah />,
   },
   {
     id: 3,
@@ -28,20 +28,21 @@ export const Categories = [
   },
   {
     id: 4,
-    name: "Desserts",
-    urlParam: "desserts",
+    name: "Proteins",
+    urlParam: "proteins",
+    icon: <GiMeat />,
   },
   {
     id: 5,
-    name: "Icecreams",
-    urlParam: "icecreams",
-    icon: <MdOutlineIcecream />,
+    name: "Soups",
+    urlParam: "soup",
+    icon: <GiBubblingBowl />,
   },
   {
     id: 6,
-    name: "Fish",
-    urlParam: "fish",
-    icon: <FaFish />,
+    name: "Swallow",
+    urlParam: "swallow",
+    icon: <GiRoundSilo />,
   },
   // {
   //     id: 7,
