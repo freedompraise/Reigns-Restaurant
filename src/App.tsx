@@ -1,5 +1,8 @@
 import "react-toastify/dist/ReactToastify.css";
-
+import { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import { ToastContainer } from "react-toastify";
 import {
   About,
   Admin,
@@ -11,28 +14,23 @@ import {
   Signup,
 } from "./Pages";
 import { Cart, Footer, Header } from "./components";
-import { Route, Routes } from "react-router-dom";
 import {
   calculateCartTotal,
-  dispatchUsers,
   fetchFoodData,
   fetchUserCartData,
   isAdmin,
 } from "./utils/functions";
-
-import { AnimatePresence } from "framer-motion";
-import Contact from "./components/Contact";
-import { ToastContainer } from "react-toastify";
-import { useEffect } from "react";
 import { useStateValue } from "./context/StateProvider";
+import Contact from "./components/Contact";
 
 function App() {
-  const [{ showCart,showContactForm, user, foodItems, cartItems, adminMode }, dispatch] =
-    useStateValue();
+  const [
+    { showCart, showContactForm, user, foodItems, cartItems, adminMode },
+    dispatch,
+  ] = useStateValue();
 
   useEffect(() => {
     fetchFoodData(dispatch);
-    dispatchUsers(dispatch);
     user && fetchUserCartData(user, dispatch);
   }, []);
 
@@ -41,6 +39,7 @@ function App() {
       cartItems.length > 0 &&
       calculateCartTotal(cartItems, foodItems, dispatch);
   }, [cartItems, foodItems, dispatch]);
+
   return (
     <AnimatePresence exitBeforeEnter>
       <ToastContainer />
@@ -53,9 +52,7 @@ function App() {
             !(adminMode && isAdmin(user)) &&
             "mt-16 md:mt-16 px-3 md:px-8 md:py-6 py-4"
           } w-full h-auto`}
-          onClick={() => {}}
         >
-          {/* Routes */}
           <Routes>
             <Route path="/*" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -66,7 +63,6 @@ function App() {
             <Route path="/menu" element={<Menu />} />
             <Route path="/services" element={<Services />} />
           </Routes>
-
           {!(adminMode && isAdmin(user)) && <Footer />}
         </main>
       </div>

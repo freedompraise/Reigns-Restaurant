@@ -1,22 +1,11 @@
+import exp from "constants";
 import { FoodItem, cartItem } from "../../types";
-import {
-  firebaseAddToCart,
-  firebaseDeleteCartItem,
-  firebaseDeleteFood,
-  firebaseEmptyUserCart,
-  firebaseFetchAllCartItems,
-  firebaseFetchFoodItems,
-  firebaseGetAllUsers,
-  firebaseGetUser,
-  firebaseLogout,
-  firebaseUpdateCartItem,
-  firebaseUpdateUser,
-} from "../Firebase";
-
+import { supabase } from "./supabaseClient";
 import { MdShoppingBasket } from "react-icons/md";
 import { toast } from "react-toastify";
 
-export const addToCart = async (
+// Cart Functions
+export const addToCart = (
   cartItems: cartItem[],
   foodItems: FoodItem[],
   user: any,
@@ -29,7 +18,7 @@ export const addToCart = async (
       toastId: "unauthorizedAddToCart",
     });
   } else {
-    if (cartItems.some((item: cartItem) => item["fid"] === fid)) {
+    if (cartItems.some((item: cartItem) => item.fid === fid)) {
       toast.error("Item already in cart", {
         icon: <MdShoppingBasket className="text-2xl text-cartNumBg" />,
         toastId: "itemAlreadyInCart",
@@ -41,177 +30,85 @@ export const addToCart = async (
         uid: user.uid,
         qty: 1,
       };
-      dispatch({
-        type: "SET_CARTITEMS",
-        cartItems: [...cartItems, data],
-      });
-      calculateCartTotal(cartItems, foodItems, dispatch);
-      await firebaseAddToCart(data);
+      const newCartItems = [...cartItems, data];
+      dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
+      localStorage.setItem(`cart_${user.uid}`, JSON.stringify(newCartItems));
+      calculateCartTotal(newCartItems, foodItems, dispatch);
     }
   }
 };
-export const dispatchtUserCartItems = (
-  uid: string,
-  items: cartItem[],
-  dispatch: any
-) => {
-  const cartItems = items.filter((item: cartItem) => item.uid === uid);
-  dispatch({
-    type: "SET_CARTITEMS",
-    cartItems: cartItems,
-  });
 
-  return cartItems;
-};
-
-export const fetchUserCartData = async (user: any, dispatch: any) => {
+export const fetchUserCartData = (user: any, dispatch: any) => {
   if (user) {
-    await firebaseFetchAllCartItems()
-      .then((data) => {
-        const userCart = dispatchtUserCartItems(user.uid, data, dispatch);
-        localStorage.setItem("cartItems", JSON.stringify(userCart));
-      })
-      .then(() => {})
-      .catch((e) => {
-        console.log(e);
-      });
-  } else {
-    localStorage.setItem("cartItems", "undefined");
+    const userCart = JSON.parse(
+      localStorage.getItem(`cart_${user.uid}`) || "[]"
+    );
+    dispatch({ type: "SET_CARTITEMS", cartItems: userCart });
   }
 };
 
-export const fetchFoodData = async (dispatch: any) => {
-  await firebaseFetchFoodItems()
-    .then((data) => {
-      dispatch({
-        type: "SET_FOOD_ITEMS",
-        foodItems: data,
-      });
-    })
-    .then(() => {})
-    .catch((e) => {
-      console.log(e);
-    });
-};
-
-export const getFoodyById = (menu: FoodItem[], fid: number) => {
-  return menu.find((item: FoodItem) => item.id === fid);
-};
-
-//  Update cart item State
-export const updateCartItemState = async (
-  cartItems: cartItem[],
-  item: cartItem,
-  dispatch: any
-) => {
-  const index = cartItems.findIndex(
-    (cartItem: cartItem) => cartItem.id === item.id
-  );
-  if (index !== -1) {
-    cartItems[index] = item;
-  }
-  dispatch({
-    type: "SET_CARTITEMS",
-    cartItems: cartItems,
-  });
-  await firebaseUpdateCartItem(item)
-    .then(() => {})
-    .catch((e) => {
-      console.log(e);
-    });
-};
-
-// Update Cart Item Quantity
-export const updateCartItemQty = async (
+export const updateCartItemQty = (
   cartItems: cartItem[],
   foodItems: FoodItem[],
   item: cartItem,
   dispatch: any,
-  val: number
+  val: number,
+  user: any
 ) => {
-  const index = cartItems.findIndex(
-    (cartItem: cartItem) => cartItem.id === item.id
-  );
+  const index = cartItems.findIndex((cartItem) => cartItem.id === item.id);
   if (index !== -1) {
-    cartItems[index].qty += val;
-    dispatch({
-      type: "SET_CARTITEMS",
-      cartItems: cartItems,
-    });
-    calculateCartTotal(cartItems, foodItems, dispatch);
-    await firebaseUpdateCartItem(cartItems[index])
-      .then(() => {})
-      .catch((e) => {
-        console.log(e);
-      });
+    const newCartItems = [...cartItems];
+    newCartItems[index].qty += val;
+    dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
+    localStorage.setItem(`cart_${user.uid}`, JSON.stringify(newCartItems));
+    calculateCartTotal(newCartItems, foodItems, dispatch);
   }
 };
 
-//  Delete Cart Item
-export const deleteCartItem = async (
+export const deleteCartItem = (
   cartItems: cartItem[],
   foodItems: FoodItem[],
   item: cartItem,
-  dispatch: any
+  dispatch: any,
+  user: any
 ) => {
-  const index = cartItems.findIndex(
-    (cartItem: cartItem) => cartItem.id === item.id
-  );
-  if (index !== -1) {
-    cartItems.splice(index, 1);
-    dispatch({
-      type: "SET_CARTITEMS",
-      cartItems: cartItems,
-    });
-    calculateCartTotal(cartItems, foodItems, dispatch);
-    await firebaseDeleteCartItem(item)
-      .then(() => {})
-      .catch((e) => {
-        console.log(e);
-      });
+  const newCartItems = cartItems.filter((cartItem) => cartItem.id !== item.id);
+  dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
+  localStorage.setItem(`cart_${user.uid}`, JSON.stringify(newCartItems));
+  calculateCartTotal(newCartItems, foodItems, dispatch);
+};
+
+export const emptyCart = (dispatch: any, user: any) => {
+  dispatch({ type: "SET_CARTITEMS", cartItems: [] });
+  localStorage.setItem(`cart_${user.uid}`, "[]");
+  dispatch({ type: "SET_CART_TOTAL", cartTotal: 0 });
+};
+
+// Food Data Functions
+export const fetchFoodData = async (dispatch: any) => {
+  try {
+    const { data, error } = await supabase.from("Food").select("*");
+    if (!error) {
+      dispatch({ type: "SET_FOOD_ITEMS", foodItems: data });
+    }
+  } catch (e) {
+    console.log(e);
   }
 };
 
-// Calculate Total Price Round to 2 decimal places
+// Other Functions
 export const calculateCartTotal = (
   cartItems: cartItem[],
   foodItems: FoodItem[],
   dispatch: any
 ) => {
-  let total = 0;
-  cartItems.forEach((item: cartItem) => {
-    const foodItem = getFoodyById(foodItems, item.fid);
-    total += item.qty * parseFloat(foodItem?.price || "0");
-  });
-  dispatch({
-    type: "SET_CART_TOTAL",
-    cartTotal: total.toFixed(2),
-  });
+  const total = cartItems.reduce((sum, item) => {
+    const foodItem = foodItems.find((food) => food.id === item.fid);
+    return sum + (Number(foodItem?.price) || 0) * item.qty;
+  }, 0);
+  dispatch({ type: "SET_CART_TOTAL", cartTotal: Number(total.toFixed(2)) });
 };
 
-// Empty Cart
-export const emptyCart = async (
-  cartItems: cartItem[],
-  foodItems: FoodItem[],
-  dispatch: any
-) => {
-  if (cartItems.length > 0) {
-    dispatch({
-      type: "SET_CARTITEMS",
-      cartItems: [],
-    });
-    calculateCartTotal(cartItems, foodItems, dispatch);
-    await firebaseEmptyUserCart(cartItems)
-      .then(() => {})
-      .catch((e) => {
-        console.log(e);
-      });
-  } else {
-    toast.warn("Cart is already empty");
-  }
-};
-
-// Hide Cart
 export const hideCart = (dispatch: any) => {
   dispatch({
     type: "TOGGLE_CART",
@@ -219,143 +116,36 @@ export const hideCart = (dispatch: any) => {
   });
 };
 
-// Hide Cart
-export const hideContactform = (dispatch: any) => {
-  dispatch({
-    type: "TOGGLE_CONTACT_FORM",
-    showContactForm: !true,
-  });
-};
+const user = localStorage.getItem("user");
 
-export const shuffleItems = (items: any) => {
-  let currentIndex = items.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [items[currentIndex], items[randomIndex]] = [
-      items[randomIndex],
-      items[currentIndex],
-    ];
-  }
-
-  return items;
-};
-
-export const logout = async (user: any, dispatch: any, navigate: any) => {
-  if (user) {
-    await firebaseLogout()
-      .then(() => {
-        dispatch({
-          type: "SET_USER",
-          user: null,
-        });
-        dispatch({
-          type: "SET_CARTITEMS",
-          cartItems: [],
-        });
-        // turn off adminMode
-        dispatch({
-          type: "SET_ADMIN_MODE",
-          adminMode: false,
-        });
-
-        localStorage.setItem("user", "undefined");
-        localStorage.setItem("adminMode", "undefined");
-        localStorage.removeItem("cartItems");
-        navigate("/");
-      })
-      .catch((e: any) => {
-        console.log(e);
-      });
-  } else {
-    console.log("You are not logged in");
-  }
-};
-
-export const ToggleAdminMode = (dispatch: any, state: boolean) => {
-  dispatch({
-    type: "SET_ADMIN_MODE",
-    adminMode: state,
-  });
-  localStorage.setItem("adminMode", JSON.stringify(state));
-  console.log(state);
+export const logout = (user: any, dispatch: any, navigate: any) => {
+  dispatch({ type: "SET_USER", user: null });
+  dispatch({ type: "SET_CARTITEMS", cartItems: [] });
+  dispatch({ type: "SET_ADMIN_MODE", adminMode: false });
+  localStorage.removeItem("user");
+  localStorage.removeItem("adminMode");
+  navigate("/");
 };
 
 export const isAdmin = (user: any) => {
-  let isAdmin =user?.email == "bentilshadrack72@gmail.com" || user?.email == "admin@test.com"
-  return isAdmin
+  return user?.email === "admin@test.com";
 };
 
-// get user
-export const getUserData = async (user: any) => {
-  return await firebaseGetUser(user.uid);
+// Placeholder functions for removed Firebase operations
+export const dispatchUsers = () => {};
+export const updateUserData = () => {};
+export const deleteFood = () => {};
+export const ToggleAdminMode = (dispatch: any, val: boolean) => {
+  dispatch({ type: "SET_ADMIN_MODE", adminMode: val });
+};
+export const shuffleItems = (items: any) => {
+  return items.sort(() => Math.random() - 0.5);
 };
 
-// update currentUser
-export const updateUserData = async (
-  user: any,
-  dispatch: any,
-  alert: boolean
-) => {
-  await firebaseUpdateUser(user)
-    .then(() => {
-      dispatch({
-        type: "SET_USER",
-        user: user,
-      });
-    })
-    .catch((e: any) => {
-      console.log(e);
-    })
-    .then(() => {
-      localStorage.setItem("user", JSON.stringify(user));
-      alert && toast.success("User data updated successfully");
-    });
+export const getFoodyById = (foodItems: FoodItem[], id: number) => {
+  return foodItems.find((food) => food.id === id);
 };
 
-// get all users
-export const dispatchUsers = async (dispatch: any) => {
-  await firebaseGetAllUsers()
-    .then((users: any) => {
-      dispatch({
-        type: "SET_USERS",
-        users: users,
-      });
-    })
-    .catch((e: any) => {
-      console.log(e);
-    }); 
-}
-export const getAllUser = async() => {
-   await firebaseGetAllUsers().then((users: any) => {
-    return users
-   }).catch((e:any) => {
-    console.log(e)
-   })
-}
-// delete food
-export const deleteFood = async (
-  food: FoodItem,
-  foodItems: FoodItem[],
-  dispatch: any
-) => {
-  await firebaseDeleteFood(food.id);
-  // remove food from foodItems
-  const foodIndex = foodItems.indexOf(food);
-  if(foodIndex !== -1)
-  {
-    foodItems.splice(foodIndex, 1)
-  }
-  dispatch ({
-    type: "SET_FOOD_ITEMS",
-    foodItems
-  })
-  toast.success("Food deleted successfully");
+export const hideContactform = (dispatch: any) => {
+  dispatch({ type: "SET_CONTACT_FORM_VISIBILITY", contactFormVisible: false });
 };
-

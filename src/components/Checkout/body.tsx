@@ -22,7 +22,7 @@ const Body = ({ action }: { action: any }) => {
     setLoading(true);
     setTimeout(async () => {
       setLoading(false);
-      await emptyCart(cartItems, foodItems, dispatch);
+      await emptyCart(cartItems, foodItems);
       action(false);
       toast.success(
         "Order completed successfuly with payment. Thank you for your patronage.",
