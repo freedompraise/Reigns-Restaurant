@@ -8,43 +8,31 @@ import { toast } from "react-toastify";
 export const addToCart = (
   cartItems: cartItem[],
   foodItems: FoodItem[],
-  user: any,
   fid: number,
   dispatch: any
 ) => {
-  if (!user) {
-    toast.error("Please login to add items to cart", {
+  if (cartItems.some((item: cartItem) => item.fid === fid)) {
+    toast.error("Item already in cart", {
       icon: <MdShoppingBasket className="text-2xl text-cartNumBg" />,
-      toastId: "unauthorizedAddToCart",
+      toastId: "itemAlreadyInCart",
     });
   } else {
-    if (cartItems.some((item: cartItem) => item.fid === fid)) {
-      toast.error("Item already in cart", {
-        icon: <MdShoppingBasket className="text-2xl text-cartNumBg" />,
-        toastId: "itemAlreadyInCart",
-      });
-    } else {
-      const data: cartItem = {
-        id: Date.now(),
-        fid: fid,
-        uid: user.uid,
-        qty: 1,
-      };
-      const newCartItems = [...cartItems, data];
-      dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
-      localStorage.setItem(`cart_${user.uid}`, JSON.stringify(newCartItems));
-      calculateCartTotal(newCartItems, foodItems, dispatch);
-    }
+    const data: cartItem = {
+      id: Date.now(),
+      fid: fid,
+      uid: "some-unique-user-id",
+      qty: 1,
+    };
+    const newCartItems = [...cartItems, data];
+    dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
+    localStorage.setItem(`cart`, JSON.stringify(newCartItems));
+    calculateCartTotal(newCartItems, foodItems, dispatch);
   }
 };
 
-export const fetchUserCartData = (user: any, dispatch: any) => {
-  if (user) {
-    const userCart = JSON.parse(
-      localStorage.getItem(`cart_${user.uid}`) || "[]"
-    );
-    dispatch({ type: "SET_CARTITEMS", cartItems: userCart });
-  }
+export const fetchUserCartData = (dispatch: any) => {
+  const userCart = JSON.parse(localStorage.getItem(`cart`) || "[]");
+  dispatch({ type: "SET_CARTITEMS", cartItems: userCart });
 };
 
 export const updateCartItemQty = (
@@ -52,15 +40,14 @@ export const updateCartItemQty = (
   foodItems: FoodItem[],
   item: cartItem,
   dispatch: any,
-  val: number,
-  user: any
+  val: number
 ) => {
   const index = cartItems.findIndex((cartItem) => cartItem.id === item.id);
   if (index !== -1) {
     const newCartItems = [...cartItems];
     newCartItems[index].qty += val;
     dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
-    localStorage.setItem(`cart_${user.uid}`, JSON.stringify(newCartItems));
+    localStorage.setItem(`cart`, JSON.stringify(newCartItems));
     calculateCartTotal(newCartItems, foodItems, dispatch);
   }
 };
@@ -69,18 +56,17 @@ export const deleteCartItem = (
   cartItems: cartItem[],
   foodItems: FoodItem[],
   item: cartItem,
-  dispatch: any,
-  user: any
+  dispatch: any
 ) => {
   const newCartItems = cartItems.filter((cartItem) => cartItem.id !== item.id);
   dispatch({ type: "SET_CARTITEMS", cartItems: newCartItems });
-  localStorage.setItem(`cart_${user.uid}`, JSON.stringify(newCartItems));
+  localStorage.setItem(`cart`, JSON.stringify(newCartItems));
   calculateCartTotal(newCartItems, foodItems, dispatch);
 };
 
-export const emptyCart = (dispatch: any, user: any) => {
+export const emptyCart = (dispatch: any) => {
   dispatch({ type: "SET_CARTITEMS", cartItems: [] });
-  localStorage.setItem(`cart_${user.uid}`, "[]");
+  localStorage.setItem(`cart`, "[]");
   dispatch({ type: "SET_CART_TOTAL", cartTotal: 0 });
 };
 
@@ -116,9 +102,7 @@ export const hideCart = (dispatch: any) => {
   });
 };
 
-const user = localStorage.getItem("user");
-
-export const logout = (user: any, dispatch: any, navigate: any) => {
+export const logout = (dispatch: any, navigate: any) => {
   dispatch({ type: "SET_USER", user: null });
   dispatch({ type: "SET_CARTITEMS", cartItems: [] });
   dispatch({ type: "SET_ADMIN_MODE", adminMode: false });
@@ -127,7 +111,8 @@ export const logout = (user: any, dispatch: any, navigate: any) => {
   navigate("/");
 };
 
-export const isAdmin = (user: any) => {
+export const isAdmin = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   return user?.email === "admin@test.com";
 };
 
