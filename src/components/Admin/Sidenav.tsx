@@ -34,7 +34,7 @@ const SidenavHeader = () => {
       initial={{ opacity: 0, x: 200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 200 }}
-      whileHover = {{scale:1.1}}
+      whileHover={{ scale: 1.1 }}
       className=""
     >
       <Link
@@ -44,7 +44,7 @@ const SidenavHeader = () => {
       >
         <img src={Logo} alt="Logo" className="w-10 h-10" />
         <p className="text-xl font-bold pl-1 no-underline text-orange-50 hover:text-orange-100">
-          Bentilzone
+          Reign
         </p>
       </Link>
     </motion.div>
@@ -56,7 +56,7 @@ const SidenavFooter = () => {
   const navigate = useNavigate();
   return (
     <motion.div
-      whileHover = {{scale:1.1}}
+      whileHover={{ scale: 1.1 }}
       initial={{ opacity: 0, x: 200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 200 }}
