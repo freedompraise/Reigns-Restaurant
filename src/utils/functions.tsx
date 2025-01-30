@@ -132,5 +132,8 @@ export const getFoodyById = (foodItems: FoodItem[], id: number) => {
 };
 
 export const hideContactform = (dispatch: any) => {
-  dispatch({ type: "SET_CONTACT_FORM_VISIBILITY", contactFormVisible: false });
+  dispatch({
+    type: "TOGGLE_CONTACT_FORM",
+    showContactForm: !true,
+  });
 };
