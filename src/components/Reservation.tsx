@@ -15,7 +15,7 @@ const ReservationSection = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full">
+    <div className="flex flex-col md:flex-row h-screen w-full" id="reservation">
       {/* Left Side: Reservation Form */}
       <div className="bg-black text-white p-8 w-full md:w-1/2 flex flex-col justify-center">
         <h2 className="text-yellow-500 text-lg font-semibold">Reservation</h2>

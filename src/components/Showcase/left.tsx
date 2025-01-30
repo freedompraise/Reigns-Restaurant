@@ -1,7 +1,13 @@
-import React from "react";
 import { BikeDelivery } from "../Assets";
 import { motion } from "framer-motion";
 const Left = () => {
+  const handleOrder = () => {
+    const reservationSection = document.getElementById("reservation");
+    if (reservationSection) {
+      reservationSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="py-2 flex-1 flex flex-col items-start justify-center gap-3">
       <div className="flex items-center gap-2 justify-center bg-orange-100 px-4 py-1 rounded-full">
@@ -35,6 +41,7 @@ const Left = () => {
         <motion.button
           whileHover={{ scale: 1.1 }}
           className="bg-white w-full md:w-auto px-4 py-2 rounded-lg hover:shadow-lg transition-all ease-in-out duration-100"
+          onClick={handleOrder}
         >
           Reservation
         </motion.button>
