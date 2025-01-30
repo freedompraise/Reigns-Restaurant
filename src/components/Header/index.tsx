@@ -27,7 +27,7 @@ const Header = () => {
             className="flex items-center gap-2 cursor-pointer"
           >
             <img src={Logo} alt="Logo" className="md:w-6 lg:w-8 object-cover" />
-            <p className="text-headingColor md:text-lg lg:text-xl font-bold">
+            <p className="text-red-600 md:text-lg lg:text-xl font-bold">
               Reign Restaurant
             </p>
           </motion.div>
